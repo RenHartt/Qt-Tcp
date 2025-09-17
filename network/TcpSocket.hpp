@@ -16,17 +16,20 @@ public slots:
         sock->connectToHost(address, port);
     }
     
+signals:
+    void sendLog(const QString& log);
+
 private slots:
     void onConnected(void) {
-        qInfo("Connected");
+        emit sendLog("Connected");
     }
     
     void onDisconnected(void) {
-        qInfo("Disconnected");
+        emit sendLog("Disconnected");
     }
     
     void onErrorOccured(QAbstractSocket::SocketError) {
-        qInfo("Error");
+        emit sendLog(sock->errorString());
     }
     
 private:

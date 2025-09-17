@@ -17,20 +17,25 @@ public:
 signals:
     void requestConnect(const QString& host, quint16 port);
 
+public slots:
+    void print(const QString& log) {
+        logPanel->appendPlainText(log);
+    }
+
 private:
     void setupUi(void) {
         mainLayout = new QHBoxLayout(this);
     
         logLayout = new QVBoxLayout();
-        log = new QPlainTextEdit(this);
-        log->setReadOnly(true);
+        logPanel = new QPlainTextEdit(this);
+        logPanel->setReadOnly(true);
         messageLayout = new QHBoxLayout();
         message = new QLineEdit(this);
         send = new QPushButton("Send", this);
         messageLayout->addWidget(message);
         messageLayout->addWidget(send);
     
-        logLayout->addWidget(log);
+        logLayout->addWidget(logPanel);
         logLayout->addLayout(messageLayout);
         mainLayout->addLayout(logLayout);
     
@@ -40,10 +45,10 @@ private:
         port = new QLineEdit(this);
         port->setPlaceholderText("Port");
         connexion = new QPushButton("Connexion", this);
-    
         connexionLayout->addWidget(ip);
         connexionLayout->addWidget(port);
         connexionLayout->addWidget(connexion);
+       
         mainLayout->addLayout(connexionLayout);
     }
 
@@ -55,7 +60,7 @@ private:
 
     QHBoxLayout* mainLayout;
     QVBoxLayout* logLayout;
-    QPlainTextEdit* log;
+    QPlainTextEdit* logPanel;
     QHBoxLayout* messageLayout;
     QLineEdit* message;
     QPushButton* send;   
