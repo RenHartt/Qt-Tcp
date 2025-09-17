@@ -1,12 +1,11 @@
 #include <QApplication>
-#include "TcpSocket.hpp"
-#include "Window.hpp"
+#include "Controller.hpp"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
-    Window win;
-    win.show();
+    Controller ctor;
+    ctor.show();
 
     return app.exec();
 }
