@@ -17,6 +17,7 @@ public:
 signals:
     void requestConnect(const QString& host, quint16 port);
     void requestDisconnect(void);
+    void requestSend(const QByteArray& message);
 
 public slots:
     void print(const QString& log) {
@@ -65,6 +66,10 @@ private:
         connect(disconnection, &QPushButton::clicked, this, [this] {
             emit requestDisconnect();
         });
+        connect(send, &QPushButton::clicked, this, [this] {
+            emit requestSend(message->text().toUtf8());
+        });
+        connect(send, &QPushButton::clicked, message, &QLineEdit::clear);
     }
 
     QHBoxLayout* mainLayout;

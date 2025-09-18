@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QDateTime>
 
 class TcpSocket : public QObject {
     Q_OBJECT
@@ -19,32 +20,51 @@ public slots:
     void onDisconnect(void) {
         sock->disconnectFromHost();
     }
+
+    void onSend(const QByteArray& data) {
+        sock->write(data);
+        QString date(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz"));
+        QString message(data);
+        emit sendLog("[" + date + "] TX -> " + message);
+    }
+
+    void onReadyRead(void) {
+        QString date(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz"));
+        emit sendLog("[" + date + "] RX -> " + QString(sock->readLine()));
+    }
     
 signals:
     void sendLog(const QString& log);
 
 private slots:
-    void onConnected(void) {
-        emit sendLog(QString("Connected at %1:%2")
-                    .arg(sock->peerAddress().toString())
-                    .arg(sock->peerPort()));
-    }
-    
-    void onDisconnected(void) {
-        emit sendLog(QString("Disconnected from %1:%2")
-                    .arg(sock->peerAddress().toString())
-                    .arg(sock->peerPort()));
-    }
-    
-    void onErrorOccured(QAbstractSocket::SocketError) {
-        emit sendLog(sock->errorString());
+    void onSocketStateChanged(QAbstractSocket::SocketState state) {
+        QString date(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz"));
+        QString log("[" + date + "] STATE -> ");
+        switch (state) {
+            case QAbstractSocket::UnconnectedState:
+                emit sendLog(log + "UNCONNECTED");
+                break;
+            case QAbstractSocket::HostLookupState:
+                emit sendLog(log + "HOST LOOK UP");
+                break;
+            case QAbstractSocket::ConnectingState:
+                emit sendLog(log + "CONNECTING");
+                break;
+            case QAbstractSocket::ConnectedState:
+                emit sendLog(log + "CONNECTED");
+                break;
+            case QAbstractSocket::ClosingState:
+                emit sendLog(log + "CLOSING");
+                break;
+            default:
+                break;
+        }
     }
     
 private:
     void wire(void) {
-        QObject::connect(sock, &QTcpSocket::connected, this, &TcpSocket::onConnected);
-        QObject::connect(sock, &QTcpSocket::disconnected, this, &TcpSocket::onDisconnected);
-        QObject::connect(sock, &QTcpSocket::errorOccurred, this, &TcpSocket::onErrorOccured);
+        QObject::connect(sock, &QTcpSocket::stateChanged, this, &TcpSocket::onSocketStateChanged);
+        QObject::connect(sock, &QTcpSocket::readyRead, this, &TcpSocket::onReadyRead);
     }
 
     QTcpSocket* sock;

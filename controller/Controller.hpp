@@ -21,6 +21,7 @@ private:
         connect(win, &Window::requestConnect, client, &TcpSocket::onConnect);
         connect(win, &Window::requestDisconnect, client, &TcpSocket::onDisconnect);
         connect(client, &TcpSocket::sendLog, win, &Window::print);
+        connect(win, &Window::requestSend, client, &TcpSocket::onSend);
     }
 
     TcpSocket* client;
