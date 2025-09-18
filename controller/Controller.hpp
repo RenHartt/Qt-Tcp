@@ -19,6 +19,7 @@ public:
 private:
     void wire() {
         connect(win, &Window::requestConnect, client, &TcpSocket::onConnect);
+        connect(win, &Window::requestDisconnect, client, &TcpSocket::onDisconnect);
         connect(client, &TcpSocket::sendLog, win, &Window::print);
     }
 

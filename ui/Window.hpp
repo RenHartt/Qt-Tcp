@@ -16,6 +16,7 @@ public:
 
 signals:
     void requestConnect(const QString& host, quint16 port);
+    void requestDisconnect(void);
 
 public slots:
     void print(const QString& log) {
@@ -32,6 +33,7 @@ private:
         messageLayout = new QHBoxLayout();
         message = new QLineEdit(this);
         send = new QPushButton("Send", this);
+        send->setStyleSheet("background-color: blue; color: black;");
         messageLayout->addWidget(message);
         messageLayout->addWidget(send);
     
@@ -44,17 +46,24 @@ private:
         ip->setPlaceholderText("Adresse IP");
         port = new QLineEdit(this);
         port->setPlaceholderText("Port");
-        connexion = new QPushButton("Connexion", this);
+        connection = new QPushButton("Connection", this);
+        connection->setStyleSheet("background-color: green; color: white;");
+        disconnection = new QPushButton("Disonnection", this);
+        disconnection->setStyleSheet("background-color: red; color: white;");
         connexionLayout->addWidget(ip);
         connexionLayout->addWidget(port);
-        connexionLayout->addWidget(connexion);
+        connexionLayout->addWidget(connection);
+        connexionLayout->addWidget(disconnection);
        
         mainLayout->addLayout(connexionLayout);
     }
 
     void wire(void) {
-        connect(connexion, &QPushButton::clicked, this, [this] {
+        connect(connection, &QPushButton::clicked, this, [this] {
             emit requestConnect(ip->text().trimmed(), port->text().toUShort());
+        });
+        connect(disconnection, &QPushButton::clicked, this, [this] {
+            emit requestDisconnect();
         });
     }
 
@@ -67,5 +76,6 @@ private:
     QVBoxLayout* connexionLayout;
     QLineEdit* ip;
     QLineEdit* port;
-    QPushButton* connexion;
+    QPushButton* connection;
+    QPushButton* disconnection;
 };

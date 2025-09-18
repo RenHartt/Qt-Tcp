@@ -15,17 +15,25 @@ public slots:
     void onConnect(const QString& address, quint16 port) {
         sock->connectToHost(address, port);
     }
+
+    void onDisconnect(void) {
+        sock->disconnectFromHost();
+    }
     
 signals:
     void sendLog(const QString& log);
 
 private slots:
     void onConnected(void) {
-        emit sendLog("Connected");
+        emit sendLog(QString("Connected at %1:%2")
+                    .arg(sock->peerAddress().toString())
+                    .arg(sock->peerPort()));
     }
     
     void onDisconnected(void) {
-        emit sendLog("Disconnected");
+        emit sendLog(QString("Disconnected from %1:%2")
+                    .arg(sock->peerAddress().toString())
+                    .arg(sock->peerPort()));
     }
     
     void onErrorOccured(QAbstractSocket::SocketError) {
