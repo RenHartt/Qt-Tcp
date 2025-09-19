@@ -20,8 +20,12 @@ signals:
     void requestSend(const QByteArray& message);
 
 public slots:
-    void print(const QString& log) {
+    void printLog(const QString& log) {
         logPanel->appendPlainText(log);
+    }
+
+    void setSendEnable(bool state) {
+        send->setEnabled(state);
     }
 
 private:
